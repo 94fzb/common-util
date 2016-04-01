@@ -53,7 +53,7 @@ public class HttpUtil {
             e.printStackTrace();
         }
         RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(5000).build();
-        httpClient = HttpClientBuilder.create()
+        httpClient = HttpClientBuilder.create().disableCookieManagement()
                 .setSSLSocketFactory(sslsf).setDefaultRequestConfig(requestConfig).setConnectionTimeToLive(5, TimeUnit.SECONDS).disableRedirectHandling().build();
 
     }
@@ -147,8 +147,11 @@ public class HttpUtil {
 
     public static <T> HttpHandle<? extends T> sendGetRequest(String urlPath, Map<String, String[]> requestParam, HttpHandle<T> httpHandle, Map<String, String> reqheaders)
             throws IOException {
-        String queryStr = mapToQueryStr(requestParam).substring(1);
-        URI uri;
+	String queryStr = mapToQueryStr(requestParam);
+        if(queryStr.length()>0){
+		queryStr = queryStr.substring(1);
+	}
+	URI uri;
         try {
             URL url = new URL(urlPath);
             if (queryStr.length() == 0) {
