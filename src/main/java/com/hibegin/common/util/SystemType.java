@@ -1,4 +1,4 @@
-package com.fzb.common;
+package com.hibegin.common.util;
 
 public enum SystemType {
 

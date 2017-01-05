@@ -1,4 +1,4 @@
-package com.fzb.common;
+package com.hibegin.common.util;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -55,12 +55,11 @@ public class ZipUtil {
                 IOUtil.getAllFiles(file.toString(), files);
             }
         }
-        System.out.println(files);
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(target));
         for (File file : files) {
-            ZipEntry entry = null;
+            ZipEntry entry;
             byte[] b = new byte[1024];
-            int len = 0;
+            int len;
             if (file.isFile()) {
                 entry = new ZipEntry(file.toString().substring(basePath.length()));
                 zos.putNextEntry(entry);

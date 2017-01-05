@@ -1,12 +1,14 @@
-package com.fzb.common;
+package com.hibegin.common.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class CmdUtil {
 
     public static int findPidByPort(int port) throws IOException, InterruptedException {
-        String cmdStr = "";
+        String cmdStr;
         if (File.separatorChar != '\\') {
             cmdStr = "netstat -anp";
         } else {
@@ -65,22 +67,40 @@ public class CmdUtil {
                 killProcByPid(pid);
             }
             System.out.println(System.currentTimeMillis() - start);
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static String sendCmd(String cmd, String... args) {
+    public static String sendCmd(String cmd, String... args) {
+        InputStream[] in = getCmdInputStream(cmd, args);
+        if (in != null) {
+            return IOUtil.getStringInputStream(in[0]);
+        }
+        return "";
+    }
+
+    public static InputStream[] getCmdInputStream(String cmd, String... args) {
+        Process pr = getProcess(cmd, args);
+        BufferedInputStream[] bufferedInputStreams = new BufferedInputStream[2];
+        if (pr != null) {
+            bufferedInputStreams[0] = new BufferedInputStream(pr.getInputStream());
+            bufferedInputStreams[1] = new BufferedInputStream(pr.getErrorStream());
+            return bufferedInputStreams;
+        }
+        return bufferedInputStreams;
+    }
+
+    public static Process getProcess(String cmd, Object... args) {
         if (args != null) {
             cmd += " ";
-            for (String str : args) {
+            for (Object str : args) {
                 cmd += str + " ";
             }
         }
         Runtime rt = Runtime.getRuntime();
         try {
-            Process pr = rt.exec(cmd);
-            return new String(IOUtil.getByteByInputStream(pr.getInputStream()));
+            return rt.exec(cmd);
         } catch (IOException e) {
             e.printStackTrace();
         }
