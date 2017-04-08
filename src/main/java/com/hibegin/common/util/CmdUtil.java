@@ -75,7 +75,7 @@ public class CmdUtil {
     public static String sendCmd(String cmd, String... args) {
         InputStream[] in = getCmdInputStream(cmd, args);
         if (in != null) {
-            return IOUtil.getStringInputStream(in[0]);
+            return IOUtils.getStringInputStream(in[0]);
         }
         return "";
     }

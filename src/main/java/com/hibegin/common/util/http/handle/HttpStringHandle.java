@@ -1,6 +1,6 @@
 package com.hibegin.common.util.http.handle;
 
-import com.hibegin.common.util.IOUtil;
+import com.hibegin.common.util.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
@@ -10,7 +10,7 @@ public class HttpStringHandle extends HttpHandle<String> {
     @Override
     public boolean handle(HttpRequestBase request, HttpResponse response) {
         try {
-            setT(IOUtil.getStringInputStream(response.getEntity().getContent()));
+            setT(IOUtils.getStringInputStream(response.getEntity().getContent()));
         } catch (IOException e) {
             e.printStackTrace();
         }

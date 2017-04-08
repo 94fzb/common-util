@@ -1,6 +1,6 @@
 package com.hibegin.common.util.http.handle;
 
-import com.hibegin.common.util.IOUtil;
+import com.hibegin.common.util.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
@@ -53,7 +53,7 @@ public class HttpFileHandle extends HttpHandle<File> {
         try {
             fin = new FileOutputStream(getT());
             if (response.getEntity() != null) {
-                fin.write(IOUtil.getByteByInputStream(response.getEntity().getContent()));
+                fin.write(IOUtils.getByteByInputStream(response.getEntity().getContent()));
                 fin.close();
             }
         } catch (IOException e) {

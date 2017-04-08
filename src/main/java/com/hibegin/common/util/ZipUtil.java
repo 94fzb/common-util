@@ -25,7 +25,7 @@ public class ZipUtil {
                 if (in.getName().endsWith("/")) {
                     file.mkdirs();
                 } else {
-                    byte[] b = IOUtil.getByteByInputStream(zip.getInputStream(in));
+                    byte[] b = IOUtils.getByteByInputStream(zip.getInputStream(in));
                     if (!new File(file.getParent()).exists()) {
                         new File(file.getParent()).mkdirs();
                     }
@@ -52,7 +52,7 @@ public class ZipUtil {
         }
         for (File file : cfiles) {
             if (file.isDirectory()) {
-                IOUtil.getAllFiles(file.toString(), files);
+                FileUtils.getAllFiles(file.toString(), files);
             }
         }
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(target));

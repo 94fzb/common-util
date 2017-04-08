@@ -1,46 +1,18 @@
 package com.hibegin.common.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
-public class IOUtil {
-
-    public static byte[] getByteByInputStream(InputStream in) {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        byte[] tempByte = new byte[1024];
-        try {
-            int length = 0;
-            while ((length = in.read(tempByte)) != -1) {
-                bout.write(tempByte, 0, length);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return bout.toByteArray();
-    }
-
-    public static String getStringInputStream(InputStream in) {
-        byte[] bytes = getByteByInputStream(in);
-        try {
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return new String(bytes);
-    }
+public class FileUtils {
 
     public static void getAllFiles(String path, List<File> files) {
         getAllFilesByProfix(path, null, files);
     }
 
-    public static void getAllFilesByProfix(String path, String suffix,
-                                           List<File> files) {
+    public static void getAllFilesByProfix(String path, String suffix, List<File> files) {
         File file = new File(path);
         if (file.isDirectory()) {
             File[] fs = file.listFiles();
@@ -121,8 +93,6 @@ public class IOUtil {
             if (isMove) {
                 f.delete();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
