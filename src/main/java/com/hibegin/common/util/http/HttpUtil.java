@@ -1,7 +1,7 @@
 package com.hibegin.common.util.http;
 
-import com.fzb.common.util.http.handle.HttpHandle;
-import com.fzb.common.util.http.handle.HttpStringHandle;
+import com.hibegin.common.util.http.handle.HttpHandle;
+import com.hibegin.common.util.http.handle.HttpStringHandle;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

@@ -1,6 +1,6 @@
 package com.hibegin.common.util.http.handle;
 
-import com.fzb.common.util.IOUtil;
+import com.hibegin.common.util.IOUtil;
 import flexjson.JSONDeserializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
