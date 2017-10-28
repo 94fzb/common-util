@@ -16,14 +16,14 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@gitee.com:94fzb/common-util.git</connection>
-        <developerConnection>scm:git:git@gitee.com:94fzb/common-util.git</developerConnection>
-        <url>git@gitee.com:94fzb/common-util.git</url>
+        <connection>scm:git:https://github.com:94fzb/common-util.git</connection>
+        <developerConnection>scm:git:https://github.com/94fzb/common-util.git</developerConnection>
+        <url>https://github.com/94fzb/common-util.git</url>
         <tag>common-util-0.0.1</tag>
     </scm>
     <issueManagement>
         <system>Github Issue</system>
-        <url>http://gitee.com/94fzb/common-util</url>
+        <url>http://github.com/94fzb/common-util</url>
     </issueManagement>
     <licenses>
         <license>
