@@ -1,7 +1,7 @@
 package com.hibegin.common.util.http.handle;
 
-import com.hibegin.common.util.IOUtils;
-import flexjson.JSONDeserializer;
+import com.google.gson.Gson;
+import com.hibegin.common.util.IOUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -14,9 +14,9 @@ public class HttpJsonArrayHandle<T> extends HttpHandle<List<T>> {
     @Override
     public boolean handle(HttpRequestBase request, HttpResponse response) {
         try {
-            String jsonStr = IOUtils.getStringInputStream(response.getEntity().getContent());
+            String jsonStr = IOUtil.getStringInputStream(response.getEntity().getContent());
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                setT(new JSONDeserializer<List<T>>().deserialize(jsonStr));
+                setT(new Gson().fromJson(jsonStr, List.class));
             } else {
                 setT(new ArrayList<T>());
             }

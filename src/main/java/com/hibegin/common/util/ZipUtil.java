@@ -2,7 +2,6 @@ package com.hibegin.common.util;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -25,7 +24,7 @@ public class ZipUtil {
                 if (in.getName().endsWith("/")) {
                     file.mkdirs();
                 } else {
-                    byte[] b = IOUtils.getByteByInputStream(zip.getInputStream(in));
+                    byte[] b = IOUtil.getByteByInputStream(zip.getInputStream(in));
                     if (!new File(file.getParent()).exists()) {
                         new File(file.getParent()).mkdirs();
                     }
@@ -52,7 +51,7 @@ public class ZipUtil {
         }
         for (File file : cfiles) {
             if (file.isDirectory()) {
-                FileUtils.getAllFiles(file.toString(), files);
+                IOUtil.getAllFiles(file.toString(), files);
             }
         }
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(target));
@@ -74,17 +73,5 @@ public class ZipUtil {
         }
         zos.close();
 
-    }
-
-    public static void main(String[] args) {
-        try {
-            //unZip("E:/putty.zip", "E:/test/");
-            List<File> files = new LinkedList<File>();
-            files.add(new File("E:/keygen.exe"));
-            files.add(new File("E:/xmlpull_1_0_5"));
-            inZip(files, "E:/", "E:/test/1.zip");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

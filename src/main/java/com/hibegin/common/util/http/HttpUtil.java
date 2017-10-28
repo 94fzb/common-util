@@ -2,6 +2,7 @@ package com.hibegin.common.util.http;
 
 import com.hibegin.common.util.http.handle.HttpHandle;
 import com.hibegin.common.util.http.handle.HttpStringHandle;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,13 +26,42 @@ import java.util.*;
 public class HttpUtil {
     private static final Logger LOGGER = Logger.getLogger(HttpUtil.class);
     private static CloseableHttpClient httpClient;
+    private static CloseableHttpClient disableRedirectHttpClient;
+    private static HttpUtil disableRedirectInstance = new HttpUtil(true);
+    private static HttpUtil instance = new HttpUtil(false);
 
     static {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         httpClient = HttpClientBuilder.create().setConnectionManager(connectionManager).build();
+        disableRedirectHttpClient = HttpClientBuilder.create().setConnectionManager(connectionManager).disableRedirectHandling().build();
     }
 
-    private static HttpPost postForm(String urlPath, Map<String, String[]> params) {
+    private boolean disableRedirect;
+
+    private HttpUtil(boolean disableRedirect) {
+        this.disableRedirect = disableRedirect;
+    }
+
+    public static HttpUtil getDisableRedirectInstance() {
+        return disableRedirectInstance;
+    }
+
+    public static HttpUtil getInstance() {
+        return instance;
+    }
+
+    public static void main(String[] args) throws IOException {
+        String urlStr = "http://ports.ubuntu.com/pool/universe/o/opencv/libopencv-imgproc2.4_2.4.9%2bdfsg-1ubuntu4_armhf.deb";
+        URL url = new URL(urlStr);
+        try {
+            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+            System.out.println(uri.toASCIIString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private HttpPost postForm(String urlPath, Map<String, String[]> params) {
         HttpPost httPost = new HttpPost(urlPath);
         List<BasicNameValuePair> basicNameValuePairList = new ArrayList<BasicNameValuePair>();
         if (params == null) {
@@ -55,13 +85,13 @@ public class HttpUtil {
         return httPost;
     }
 
-    private static HttpPost postForm(String urlPath, byte[] data) {
+    private HttpPost postForm(String urlPath, byte[] data) {
         HttpPost httPost = new HttpPost(urlPath);
         httPost.setEntity(new ByteArrayEntity(data));
         return httPost;
     }
 
-    private static String mapToQueryStr(Map<String, String[]> params) {
+    private String mapToQueryStr(Map<String, String[]> params) {
         String queryStr = "";
         if ((params != null) && (!params.isEmpty())) {
             queryStr = queryStr + "?";
@@ -76,7 +106,7 @@ public class HttpUtil {
         return queryStr;
     }
 
-    private static void setHttpHeaders(HttpRequestBase header, Map<String, String> reqHeaders) {
+    private void setHttpHeaders(HttpRequestBase header, Map<String, String> reqHeaders) {
         header.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         header.setHeader("Accept-Charset", "GB2312,UTF-8;q=0.7,*;q=0.7");
         header.setHeader("Accept-Encoding", "gzip, deflate");
@@ -89,25 +119,30 @@ public class HttpUtil {
         }
     }
 
-    public static <T> HttpHandle<? extends T> sendPostRequest(String urlPath, Map<String, String[]> params,
-                                                              HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
+    public <T> HttpHandle<? extends T> sendPostRequest(String urlPath, Map<String, String[]> params,
+                                                       HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
             throws IOException, InstantiationException {
         LOGGER.info(urlPath + " http post params " + params);
         return sendRequest(postForm(urlPath, params), httpHandle, reqHeaders);
     }
 
-    public static <T> HttpHandle<? extends T> sendPostRequest(String urlPath, byte[] date,
-                                                              HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
+    public <T> HttpHandle<? extends T> sendPostRequest(String urlPath, byte[] date,
+                                                       HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
             throws IOException, InstantiationException {
         reqHeaders.remove("Content-Length");
         return sendRequest(postForm(urlPath, date), httpHandle, reqHeaders);
     }
 
-
-    public static <T> HttpHandle<? extends T> sendRequest(HttpRequestBase httpRequestBase, HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
+    public <T> HttpHandle<? extends T> sendRequest(HttpRequestBase httpRequestBase, HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
             throws IOException {
         setHttpHeaders(httpRequestBase, reqHeaders);
-        CloseableHttpResponse response = httpClient.execute(httpRequestBase);
+        CloseableHttpClient tClient;
+        if (disableRedirect) {
+            tClient = disableRedirectHttpClient;
+        } else {
+            tClient = httpClient;
+        }
+        CloseableHttpResponse response = tClient.execute(httpRequestBase);
         boolean needClose = httpHandle.handle(httpRequestBase, response);
         if (needClose) {
             response.close();
@@ -115,7 +150,7 @@ public class HttpUtil {
         return httpHandle;
     }
 
-    public static <T> HttpHandle<? extends T> sendGetRequest(String urlPath, Map<String, String[]> requestParam, HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
+    public <T> HttpHandle<? extends T> sendGetRequest(String urlPath, Map<String, String[]> requestParam, HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
             throws IOException {
         String queryStr = mapToQueryStr(requestParam);
         if (queryStr.length() > 0) {
@@ -135,23 +170,20 @@ public class HttpUtil {
         return sendRequest(httpGet, httpHandle, reqHeaders);
     }
 
-    public static <T> HttpHandle<? extends T> sendGetRequest(String urlPath, HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
+    public <T> HttpHandle<? extends T> sendGetRequest(String urlPath, HttpHandle<T> httpHandle, Map<String, String> reqHeaders)
             throws IOException {
         return sendGetRequest(urlPath, null, httpHandle, reqHeaders);
     }
 
-    public static String getTextByUrl(String url) throws IOException {
+    public String getTextByUrl(String url) throws IOException {
         return sendGetRequest(url, new HttpStringHandle(), new HashMap<String, String>()).getT();
     }
 
-    public static void main(String[] args) throws IOException {
-        String urlStr = "http://ports.ubuntu.com/pool/universe/o/opencv/libopencv-imgproc2.4_2.4.9%2bdfsg-1ubuntu4_armhf.deb";
-        URL url = new URL(urlStr);
-        try {
-            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
-            System.out.println(uri.toASCIIString());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+    public String getSuccessTextByUrl(String url) throws IOException {
+        HttpStringHandle httpStringHandle = (HttpStringHandle) sendGetRequest(url, new HttpStringHandle(), new HashMap<String, String>());
+        if (httpStringHandle.getStatusCode() == HttpStatus.SC_OK) {
+            return httpStringHandle.getT();
         }
+        return null;
     }
 }
