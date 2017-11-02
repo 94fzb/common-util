@@ -45,7 +45,7 @@ public class ZipUtil {
     }
 
     public static void inZip(List<File> files, String basePath, String target) throws IOException {
-        List<File> cfiles = new ArrayList<File>();
+        List<File> cfiles = new ArrayList<>();
         for (File file : files) {
             cfiles.add(file);
         }
@@ -72,6 +72,5 @@ public class ZipUtil {
             }
         }
         zos.close();
-
     }
 }
