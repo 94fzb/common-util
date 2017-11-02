@@ -15,13 +15,13 @@ public class JarPackageUtil {
     private static final Logger LOGGER = Logger.getLogger(JarPackageUtil.class);
 
     public static void inJar(List<File> files, String basePath, String target) throws IOException {
-        List<File> tempFiles = new ArrayList<File>();
+        List<File> tempFiles = new ArrayList<>();
         for (File file : files) {
             tempFiles.add(file);
         }
         for (File file : tempFiles) {
             if (file.isDirectory()) {
-                IOUtil.getAllFiles(file.toString(), files);
+                FileUtils.getAllFiles(file.toString(), files);
             }
         }
         List<File> packageFileList = new ArrayList<File>();

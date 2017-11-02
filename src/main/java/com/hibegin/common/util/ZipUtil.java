@@ -51,7 +51,7 @@ public class ZipUtil {
         }
         for (File file : cfiles) {
             if (file.isDirectory()) {
-                IOUtil.getAllFiles(file.toString(), files);
+                FileUtils.getAllFiles(file.toString(), files);
             }
         }
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(target));
