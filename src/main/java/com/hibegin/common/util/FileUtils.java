@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FileUtils {
@@ -67,11 +70,15 @@ public class FileUtils {
     }
 
 
-    public static void moveOrCopyFile(String src, String target, boolean isMove) {
+    private static void moveOrCopyFile(String src, String target, boolean isMove) {
         if (isMove) {
             File dest = new File(target);
             dest.getParentFile().mkdirs();
-            new File(src).renameTo(dest);
+            File srcFile = new File(src);
+            srcFile.renameTo(dest);
+            if (srcFile.exists()) {
+                srcFile.delete();
+            }
         } else {
             try {
                 File f = new File(src);
@@ -119,5 +126,41 @@ public class FileUtils {
             }
         }
         f.delete();
+    }
+
+    /**
+     * 避免过多磁盘资源占用,超过阀值时,情况比较旧的文件
+     *
+     * @param path
+     * @param currentLength
+     * @param maxLength
+     */
+    public static void tryResizeDiskSpace(String path, long currentLength, long maxLength) {
+        List<File> fileList = new ArrayList<>();
+        FileUtils.getAllFiles(path, fileList);
+        long totalSize = currentLength;
+        for (File tFile : fileList) {
+            totalSize += tFile.length();
+        }
+        if (totalSize >= maxLength) {
+            Collections.sort(fileList, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return Long.compare(o1.lastModified(), o2.lastModified());
+                }
+            });
+            long needRemoveSize = totalSize - maxLength;
+            for (File tFile : fileList) {
+                needRemoveSize -= tFile.length();
+                tFile.delete();
+                if (needRemoveSize <= 0) {
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        moveOrCopy("/home/xiaochun/0.jpg", "/home/Public/", true);
     }
 }
