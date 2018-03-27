@@ -49,42 +49,42 @@ public class FileUtils {
         }
     }
 
-    public static void moveOrCopy(String src, String target, boolean isMove) {
-        File f = new File(src);
+    public static void moveOrCopyFolder(String dest, String targetFolder, boolean isMove) {
+        File f = new File(dest);
         if (f.isDirectory()) {
-            File fs[] = new File(src).listFiles();
-            target = target + File.separator + f.getName();
-            new File(target).mkdirs();
+            File fs[] = new File(dest).listFiles();
+            targetFolder = targetFolder + File.separator + f.getName();
+            new File(targetFolder).mkdirs();
             if (fs != null) {
                 for (File fl : fs) {
                     if (fl.isDirectory()) {
-                        moveOrCopy(fl.toString(), target, isMove);
+                        moveOrCopyFolder(fl.toString(), targetFolder, isMove);
                     } else {
-                        moveOrCopyFile(fl.toString(), target + File.separator + fl.getName(), isMove);
+                        moveOrCopyFile(fl.toString(), targetFolder + File.separator + fl.getName(), isMove);
                     }
                 }
             }
         } else {
-            moveOrCopyFile(f.toString(), target + File.separator + f.getName(), isMove);
+            moveOrCopyFile(f.toString(), targetFolder + File.separator + f.getName(), isMove);
         }
     }
 
 
-    private static void moveOrCopyFile(String src, String target, boolean isMove) {
+    public static void moveOrCopyFile(String destFile, String targetFile, boolean isMove) {
         if (isMove) {
-            File dest = new File(target);
+            File dest = new File(targetFile);
             dest.getParentFile().mkdirs();
-            File srcFile = new File(src);
+            File srcFile = new File(destFile);
             srcFile.renameTo(dest);
             if (srcFile.exists()) {
                 srcFile.delete();
             }
         } else {
             try {
-                File f = new File(src);
+                File f = new File(destFile);
                 FileInputStream in = new FileInputStream(f);
-                new File(target).getParentFile().mkdirs();
-                FileOutputStream out = new FileOutputStream(target);
+                new File(targetFile).getParentFile().mkdirs();
+                FileOutputStream out = new FileOutputStream(targetFile);
                 // 小于1M(大小根据自己的情况而定)的文件直接一次性写入。
                 byte[] b = new byte[1024];
                 int length = 0; // 出来cnt次后 文件 跳出循环
@@ -95,7 +95,7 @@ public class FileUtils {
                 in.close();
                 out.close();
             } catch (IOException e) {
-                LOGGER.error("copy file " + src + " to " + target + " error", e);
+                LOGGER.error("copy file " + destFile + " to " + targetFile + " error", e);
             }
         }
 
@@ -161,6 +161,6 @@ public class FileUtils {
     }
 
     public static void main(String[] args) {
-        moveOrCopy("/home/xiaochun/0.jpg", "/home/Public/", true);
+        moveOrCopyFolder("/home/xiaochun/0.jpg", "/home/Public/", true);
     }
 }
