@@ -46,7 +46,6 @@ public class DownloadProcessHandle extends HttpHandle<Integer> implements Serial
                             fin.write(bytes, 0, tLength);
                             count += tLength;
                             process = (int) Math.ceil(count / (length * 1.0) * 100);
-                            LOGGER.info("process = " + process);
                         }
                     }
                     if (!SecurityUtils.md5(new FileInputStream(file)).equals(md5sum)) {
