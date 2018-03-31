@@ -12,13 +12,9 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtil {
 
     public static void unZip(String src, String target) throws IOException {
-        ZipInputStream zipIn = null;
-        ZipFile zip = null;
-        try {
+        ZipEntry in;
+        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(src)); ZipFile zip = new ZipFile(src)) {
             //FIXME zip 文件不能有中文
-            zipIn = new ZipInputStream(new FileInputStream(src));
-            ZipEntry in;
-            zip = new ZipFile(src);
             while ((in = zipIn.getNextEntry()) != null) {
                 File file = new File(target + in.getName());
                 if (in.getName().endsWith("/")) {
@@ -33,22 +29,11 @@ public class ZipUtil {
                     fout.close();
                 }
             }
-            zip.close();
-        } finally {
-            if (zipIn != null) {
-                zipIn.close();
-            }
-            if (zip != null) {
-                zip.close();
-            }
         }
     }
 
     public static void inZip(List<File> files, String basePath, String target) throws IOException {
-        List<File> cfiles = new ArrayList<>();
-        for (File file : files) {
-            cfiles.add(file);
-        }
+        List<File> cfiles = new ArrayList<>(files);
         for (File file : cfiles) {
             if (file.isDirectory()) {
                 FileUtils.getAllFiles(file.toString(), files);
@@ -67,8 +52,6 @@ public class ZipUtil {
                     zos.write(b, 0, len);
                 }
                 is.close();
-            } else {
-
             }
         }
         zos.close();
