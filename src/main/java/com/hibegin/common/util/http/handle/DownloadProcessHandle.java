@@ -57,6 +57,8 @@ public class DownloadProcessHandle extends HttpHandle<Integer> implements Serial
                     }
                 } catch (IOException e) {
                     LOGGER.error("", e);
+                } finally {
+                    process = 100;
                 }
 
             }
