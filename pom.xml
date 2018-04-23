@@ -19,7 +19,7 @@
         <connection>scm:git:https://github.com:94fzb/common-util.git</connection>
         <developerConnection>scm:git:https://github.com/94fzb/common-util.git</developerConnection>
         <url>https://github.com/94fzb/common-util.git</url>
-        <tag>common-util-0.0.1</tag>
+        <tag>common-util-0.0.9</tag>
     </scm>
     <issueManagement>
         <system>Github Issue</system>
