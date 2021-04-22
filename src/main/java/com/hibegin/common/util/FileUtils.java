@@ -128,9 +128,7 @@ public class FileUtils {
         f.delete();
     }
 
-    /**
-     * 避免过多磁盘资源占用,超过阀值时,情况比较旧的文件
-     */
+
     public static void tryResizeDiskSpace(String path, long currentLength, long maxLength) {
         List<File> fileList = new ArrayList<>();
         FileUtils.getAllFiles(path, fileList);

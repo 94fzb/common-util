@@ -8,8 +8,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 public abstract class HttpHandle<T> {
+
     protected HttpRequest request;
+
     protected HttpResponse response;
+
     private T t;
 
     public Class<T> getClazz() {
@@ -28,10 +31,5 @@ public abstract class HttpHandle<T> {
         this.t = t;
     }
 
-    /**
-     * 处理各种Http响应信息
-     *
-     * @return 根据返回值确定是否关闭流
-     */
     public abstract boolean handle(HttpRequestBase request, HttpResponse response);
 }
