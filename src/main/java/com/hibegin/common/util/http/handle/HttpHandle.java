@@ -31,8 +31,6 @@ public abstract class HttpHandle<T> {
     /**
      * 处理各种Http响应信息
      *
-     * @param request
-     * @param response
      * @return 根据返回值确定是否关闭流
      */
     public abstract boolean handle(HttpRequestBase request, HttpResponse response);
