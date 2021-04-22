@@ -1,13 +1,14 @@
 package com.hibegin.common.util.http.handle;
 
-import com.hibegin.common.util.IOUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.Random;
 
 public class HttpFileHandle extends HttpHandle<File> {
 
-    private String filePath;
+    private final String filePath;
 
     public HttpFileHandle(String filePath) {
         this.filePath = filePath;
@@ -49,13 +50,8 @@ public class HttpFileHandle extends HttpHandle<File> {
                 setT(new File(filePath + path.substring(path.lastIndexOf('/')) + "." + randomFile()));
             }
         }
-        FileOutputStream fin;
         try {
-            fin = new FileOutputStream(getT());
-            if (response.getEntity() != null) {
-                fin.write(IOUtil.getByteByInputStream(response.getEntity().getContent()));
-                fin.close();
-            }
+            Files.copy(response.getEntity().getContent(), Paths.get(getT().toString()), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
