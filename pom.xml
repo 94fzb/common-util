@@ -4,7 +4,7 @@
     <name>common-util</name>
     <groupId>com.hibegin</groupId>
     <artifactId>common-util</artifactId>
-    <version>0.0.12</version>
+    <version>0.0.13-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <url>http://github.com/94fzb/common-util</url>
